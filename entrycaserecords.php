@@ -122,37 +122,33 @@ if(isset($_POST['insert']))
     // }
 
     // if(empty($errorMsg)) {
-    
-         $insert_Query1 = "INSERT INTO `case information`(`CaseNo`, `CaseTitle`, `DateFiled`,`DateReceived`,`CaseCategory`) VALUES ('$data[0]','$data[1]','$data[2]','$data[3]','$data[4]')";
 
-         $insert_Query2 = "INSERT INTO `case details`(`Nature`,`NatureDescription`,`CaseStatus`,`IfOthers`,`DateReturnedtoOCC`,`DateRemoved`,`Reason`,`OtherDetails`) VALUES ('$data[5]','$data[6]','$data[7]','$data[8]','$data[9]','$data[10]','$data[11]','$data[12]')";
+         $insert_Query1 = "INSERT INTO `case information`(`CaseNo`, `CaseTitle`, `DateFiled`,`DateReceived`,`CaseCategory`) VALUES ($data[0],'$data[1]','$data[2]','$data[3]','$data[4]')";
 
-         $insert_Query3 = "INSERT INTO `accused information`(`AccusedLname`,`AccusedFname`,`AccusedMi`,`AccusedAlias`,`AccusedDOB`,`AccusedGender`,`AccusedStatus`,`AccusedAge`,`AccusedContactNo`,`AccusedAddress`) VALUES ('$data[13]','$data[14]','$data[15]','$data[16]','$data[17]','$data[18]','$data[19]','$data[20]','$data[21]','$data[22]')";
+         $insert_Query2 = "INSERT INTO `case details`(`CaseNo`, `Nature`,`NatureDescription`,`CaseStatus`,`IfOthers`,`DateReturnedtoOCC`,`DateRemoved`,`Reason`,`OtherDetails`) VALUES ($data[0], '$data[5]','$data[6]','$data[7]','$data[8]','$data[9]','$data[10]','$data[11]','$data[12]')";
 
-          $insert_Query4 = "INSERT INTO `arraignment information`(`AccusedStatus`,`DetentionDate`,`DateArrested`,`BailDate`,`VoluntarySurrenderDate`,`DetentionPlace`,`DateReleased`,`ReleaseReason`) VALUES ('$data[23]','$data[24]','$data[25]','$data[26]','$data[27]','$data[28]','$data[29]','$data[30]')";
+         $insert_Query3 = "INSERT INTO `accused information`(`CaseNo`, `AccusedLname`,`AccusedFname`,`AccusedMi`,`AccusedAlias`,`AccusedDOB`,`AccusedGender`,`AccusedStatus`,`AccusedAge`,`AccusedContactNo`,`AccusedAddress`) VALUES ($data[0], $data[13]','$data[14]','$data[15]','$data[16]','$data[17]','$data[18]','$data[19]','$data[20]','$data[21]','$data[22]')";
 
-           $insert_Query5 = "INSERT INTO `pre-trial information`(`InitialSetting`,`ActualArraignmentDate`,`PreTrialDate`,`PromulgationDate`,`Plea`,`PleaDate`,`DateRevived`,`DateArchived`) VALUES ('$data[31]','$data[32]','$data[33]','$data[34]','$data[35]','$data[36]','$data[37]','$data[38]')";
+          $insert_Query4 = "INSERT INTO `arraignment information`(`CaseNo`, `AccusedStatus`,`DetentionDate`,`DateArrested`,`BailDate`,`VoluntarySurrenderDate`,`DetentionPlace`,`DateReleased`,`ReleaseReason`) VALUES ($data[0], $data[23]','$data[24]','$data[25]','$data[26]','$data[27]','$data[28]','$data[29]','$data[30]')";
 
-      try{
-          $insert_Result = mysqli_query($connect, $insert_Query1);
-          $insert_Result = mysqli_query($connect, $insert_Query2);
-          $insert_Result = mysqli_query($connect, $insert_Query3);
-          $insert_Result = mysqli_query($connect, $insert_Query4);
-          $insert_Result = mysqli_query($connect, $insert_Query5);
-          
-          if($insert_Result)
-          {
-              if(mysqli_affected_rows($connect) > 0)
-              {
-                  echo 'Data Inserted';
-              }else{
-                  echo 'Data Not Inserted';
-              }
-          }
-      } catch (Exception $ex) {
-          echo 'Error Insert '.$ex->getMessage();
-      }
-      
+         $insert_Query5 = "INSERT INTO `pre-trial information`(`CaseNo`, `InitialSetting`,`ActualArraignmentDate`,`PreTrialDate`,`PromulgationDate`,`Plea`,`PleaDate`,`DateRevived`,`DateArchived`) VALUES ($data[0], $data[31]','$data[32]','$data[33]','$data[34]','$data[35]','$data[36]','$data[37]','$data[38]')";
+
+    try {
+        $insert_Result = mysqli_query($connect, $insert_Query1);
+        $insert_Result = mysqli_query($connect, $insert_Query2);
+        $insert_Result = mysqli_query($connect, $insert_Query3);
+        $insert_Result = mysqli_query($connect, $insert_Query4);
+        $insert_Result = mysqli_query($connect, $insert_Query5);
+
+        if ($insert_Result) {
+            if (mysqli_affected_rows($connect) > 0) {
+                echo 'Data Inserted';
+            } else {
+                echo 'Data Not Inserted';
+            }
+        }
+    } catch (Exception $ex) {
+        echo 'Error Insert '.$ex->getMessage();
     }
 // }
   session_start(); 
