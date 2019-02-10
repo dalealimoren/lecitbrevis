@@ -1,14 +1,86 @@
 <?php
+$host = "localhost";
+$user = "root";
+$password ="";
+$database = "entry";
+
+$CaseNo = "";
+$CaseTitle = "";
+$DateFiled = "";
+$DateReceived = "";
+$CaseCategory = "";
+$Nature = "";
+$NatureDescription = "";
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+// connect to mysql database
+try{
+    $connect = mysqli_connect($host, $user, $password, $database);
+} catch (mysqli_sql_exception $ex) {
+    echo 'Error';
+}
+
+// get values from the form
+function getPosts()
+{
+    $posts = array();
+    $posts[0] = $_POST['CaseNo'];
+    $posts[1] = $_POST['CaseTitle'];
+    $posts[2] = $_POST['DateFiled'];
+    $posts[3] = $_POST['DateReceived'];
+    $posts[4] = $_POST['CaseCategory'];
+    $posts[5] = $_POST['Nature'];
+    $posts[6] = $_POST['NatureDescription'];
+
+    return $posts;
+}
+
+
+// Insert
+if(isset($_POST['insert']))
+{
+    $data = getPosts();
+
+    foreach ($data as $key => $value) {
+      if (empty($value)) {
+        $errorMsg .= "$key is empty<br>";
+      }
+    }
+
+    if(empty($errorMsg)) {
+    
+         $insert_Query1 = "INSERT INTO `case information`(`CaseNo`, `CaseTitle`, `DateFiled`,`DateReceived`,`CaseCategory`) VALUES ('$data[0]','$data[1]','$data[2]','$data[3]','$data[4]')";
+         $insert_Query2 = "INSERT INTO `case details`(`Nature`,`NatureDescription`) VALUES ('$data[5]','$data[6]')";
+      try{
+          $insert_Result = mysqli_query($connect, $insert_Query1);
+          $insert_Result = mysqli_query($connect, $insert_Query2);
+          
+          if($insert_Result)
+          {
+              if(mysqli_affected_rows($connect) > 0)
+              {
+                  echo 'Data Inserted';
+              }else{
+                  echo 'Data Not Inserted';
+              }
+          }
+      } catch (Exception $ex) {
+          echo 'Error Insert '.$ex->getMessage();
+      }
+      
+    }
+}
   session_start(); 
 
   if (!isset($_SESSION['username'])) {
-  	$_SESSION['msg'] = "You must log in first";
-  	header('location: login.php');
+    $_SESSION['msg'] = "You must log in first";
+    header('location: login.php');
   }
   if (isset($_GET['logout'])) {
-  	session_destroy();
-  	unset($_SESSION['username']);
-  	header("location: login.php");
+    session_destroy();
+    unset($_SESSION['username']);
+    header("location: login.php");
   }
 ?>
 <!DOCTYPE html>
@@ -63,27 +135,55 @@
 .notification: {
   padding-top: 70px;
 }
-h3
+/*h3
 {
   text-align: center;
-}
+}*/
 
 section{
-
-    background-color: white;
-    padding: 290px;
-    text-align: center;
-    color: white;
-    
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 70px;
+  /*font-family: "Comic Sans MS";*/
+  color: black;
+  font-style: normal;    
 }
+/*h1 {
+  text-shadow: 3px 2px black;
+}*/
+hr { 
+  display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-left: auto;
+  margin-right: auto;
+  border-style: inset;
+  /*border-width: 5px;*/
+} 
 
-footer{
+/*footer{
 
     background-color: #993300;
     padding: 10px;
     text-align: center;
     color: white;
     
+}*/
+p.normal {
+  /*font-style: bold;*/
+}
+input[type=submit] {
+  background-color: #993300;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+input[type=submit]:hover {
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
 }
 
 
@@ -100,14 +200,15 @@ footer{
     <?php  if (isset($_SESSION['username'])) : ?>
     <ul class="nav navbar-nav">
       <li class="active">
-      Welcome <span class="glyphicon glyphicon-user"></span> <strong><?php echo $_SESSION['username']; ?></strong> <span class="glyphicon glyphicon-globe logo"></span>
+      Welcome <span class="glyphicon glyphicon-user"></span> <strong><?php echo $_SESSION['username']; ?></strong>
+      <span class="glyphicon glyphicon-globe logo"></span>
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
         <!-- <li><a href="ucr.php">Update Case Records</a></li> -->
          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown">Entry <span class="caret"></span></a>
         <ul class="dropdown-menu">
-        <li><a href="entrycaseinformation.php">Case Information</a></li>
+           <li><a href="entrycaseinformation.php">Case Information</a></li>
           <li><a href="entryaccusedinformation.php">Accused Information</a></li>
           <li><a href="entryarraignment.php">Arraignment & Pre-Trial</a></li>
           <li><a href="entryborrowlogs.php">Borrow Logs</a></li>
@@ -125,7 +226,7 @@ footer{
         <li><a href="search.php">Search</a></li>
          <li><a href="schedule.php">Schedule</a></li>
         <!-- <li><a href="log.php">Entry Logs</a></li> -->
-      <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown">Reports <span class="caret"></span></a>
+      <li style="background-color: black" class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown">Reports <span class="caret"></span></a>
         <ul class="dropdown-menu">
           <li><a href="reports.php">Quarterly Report</a></li>
           <li><a href="borrowreports.php">Borrow Logs</a></li>
@@ -147,35 +248,38 @@ footer{
   </div>
 </nav>
  <?php endif ?>
+
+  <section>
+   <h2>Borrow Logs Report</h2>
+  <form action="borrowreports.php" method="post">
+     <div class="form-group row">
+      <div class="col-xs-3">
+      <label for="number">Case No:</label>
+        <input type="text" class="form-control" id="number" name="" placeholder="Enter Case Number" value="">
+     </div>
+   </div>
+     <div class="form-group row">
+      <div class="col-xs-3">
+      <label for="date">Date & Time Borrowed From:</label>
+        <input type="date" class="form-control" id="number" name="AccusedLname" placeholder="Enter Last Name" value="<?php echo $AccusedLname;?>">
+     </div>
+     <div class="col-xs-3">
+      <label for="date">Date & Time Borrowed To:</label>
+        <input type="date" class="form-control" id="number" name="AccusedLname" placeholder="Enter Last Name" value="<?php echo $AccusedLname;?>">
+     </div>
+   </div>
+    <input type="submit" name="insert" value="View Logs">
   
-
-<div class="notification">
-    <!-- notification message -->
-    <?php if (isset($_SESSION['success'])) : ?>
-      <div class="error success" >
-        <h3>
-          <?php 
-            echo $_SESSION['success']; 
-            unset($_SESSION['success']);
-          ?>
-        </h3>
-      </div>
-    <?php endif ?>
-
-    <!-- logged in user information -->
-  
-</div>
+   
+ </form>
+ </section>
 
 
 
-<!-- Footer -->
-<section>
-   <h1>LOGO</h1>
-</section>
 
-<footer>
+<!-- <footer>
    <p>All Rights Reserve 2018</p> 
-</footer>
+</footer> -->
 
 
 
@@ -187,4 +291,5 @@ footer{
 
 
 
-		
+    
+ 
