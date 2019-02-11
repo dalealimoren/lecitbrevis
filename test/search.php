@@ -257,11 +257,10 @@ input[type=submit]:hover {
 
  <section>
    <h2>Search Accused</h2>
-  <form action="search.php" method="post">
-     <div class="form-group row">
+
+    <div class="form-group row">
       <div class="col-xs-3">
-      <label for="number">Accused ID:</label>
-       <input type="number" class="form-control" id="number" name="AccusedID" placeholder="Enter Accused ID" value="<?php echo $AccusedID;?>">
+       <input class="form-control" id="search" placeholder="Search">
      </div>
      <div class="col-xs-3">
       <label for="number"></label>
@@ -269,6 +268,30 @@ input[type=submit]:hover {
      </div>
    </div>
    <hr>
+   <div class="table-responsive">
+    <table class="table table-bordered table-hover" id="accused-table">
+      <thead>
+        <tr>
+          <td>Accused ID</td>
+          <td>Case Number</td>
+          <td>Last Name</td>
+          <td>First Name</td>
+          <td>Middle Initial</td>
+          <td>Alias</td>
+          <td>Birthdate</td>
+          <td>Gender</td>
+          <td>Status</td>
+          <td>Age</td>
+          <td>Contact No</td>
+          <td>Address</td>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+   </div>
+   <!--
+   <form action="search.php" method="post">
    <div class="form-group row">
       <div class="col-xs-5">
       <label for="number">Last Name:</label>
@@ -306,9 +329,10 @@ input[type=submit]:hover {
      </div>
    </div>
    <hr>
-                <input type="submit" name="insert" value="View Cases of Accused">
+                <input id="view-cases" type="submit" name="insert" value="View Cases of Accused">
                 <input type="submit" name="insert" value="Clear">
  </form>
+-->
  </section>
 
 
@@ -318,7 +342,83 @@ input[type=submit]:hover {
    <p>All Rights Reserve 2018</p> 
 </footer> -->
 
+<script>
+  $(document).ready(function () {
 
+    $.post({
+      url: "/test/api/accused-information.php",
+      data: {
+        action: 'fetch-all'
+      }
+    })
+    .done(function (response, textStatus, jqXHR) {
+      let table = $('#accused-table tbody');
+
+      table.empty();
+      if (response.length > 0) {
+        response.forEach(function (item) {
+          table.append($('<tr>')
+            .append([
+              $('<td>').text(item.AccusedID),
+              $('<td>').text(item.CaseNo),
+              $('<td>').text(item.AccusedLname),
+              $('<td>').text(item.AccusedFname),
+              $('<td>').text(item.AccusedMi),
+              $('<td>').text(item.AccusedAlias),
+              $('<td>').text(item.AccusedDOB),
+              $('<td>').text(item.AccusedGender),
+              $('<td>').text(item.AccusedStatus),
+              $('<td>').text(item.AccusedAge),
+              $('<td>').text(item.AccusedContactNo),
+              $('<td>').text(item.AccusedAddress),
+            ]));
+        });
+      }
+      // If no results
+      else {
+        table.append($('<tr>')
+          .append($('<td>')
+            .text('No entries found')
+            .attr('colspan', 12)));
+      }
+
+    })
+    .fail(function (jqXHR, textStatus, errorThrown) {
+      alert('Something went wrong!');
+    });
+
+    $('#search').keyup(function(){  
+      search_table($(this).val());  
+    });  
+
+    function search_table(value) {  
+      $('#accused-table tbody tr').each(function(){  
+        var found = 'false';  
+        $(this).each(function() {  
+            if($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0)  
+            {  
+              found = 'true';  
+            }  
+        });  
+
+        if(found == 'true') {  
+          $(this).show();  
+        }  
+        else {  
+          $(this).hide();  
+        }  
+      });  
+    }
+
+    $('#accused-table tbody').on('click', 'tr', function (e) {
+      let accusedId = $(this).find('td')[0].textContent;
+      $("<iframe>")
+        .hide()
+        .attr("src", "/test/printables/case-records.php?accused_id=" + accusedId)
+        .appendTo("body");
+    });
+  });
+</script>
 
 
 

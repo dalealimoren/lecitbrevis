@@ -81,6 +81,27 @@ if (isset($_POST['action']))
 			echo mysqli_error($connect);
 		}
 	}
+	elseif ($action === 'fetch-all') {
+		$query = "SELECT * FROM `accused information`";
+
+         
+		if ($result = mysqli_query($connect, $query))
+		{
+			$response = [];
+			while ($row = mysqli_fetch_assoc($result)) {
+		        $response[] = $row;
+		    }
+
+		    http_response_code(200);
+	    	header('Content-Type: application/json');
+		    echo json_encode($response); 
+
+		    return;
+		} 
+		else {
+			echo mysqli_error($connect);
+		}
+	}
 }
 else {
 	echo 'Action is required';

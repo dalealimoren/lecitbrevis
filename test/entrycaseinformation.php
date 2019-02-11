@@ -95,6 +95,32 @@ if(isset($_POST['insert']))
   	unset($_SESSION['username']);
   	header("location: login.php");
   }
+
+
+  $caseCategories = [];
+  $query = "SELECT * FROM `case category`";
+  if ($result = mysqli_query($connect, $query))
+  {
+    while ($row = mysqli_fetch_assoc($result)) {
+      $caseCategories[] = $row;
+    }
+  } 
+  else {
+    echo mysqli_error($connect);
+  }
+
+
+  $caseRemarks = [];
+  $query = "SELECT * FROM `caseremarks`";
+  if ($result = mysqli_query($connect, $query))
+  {
+    while ($row = mysqli_fetch_assoc($result)) {
+      $caseRemarks[] = $row;
+    }
+  } 
+  else {
+    echo mysqli_error($connect);
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -285,7 +311,13 @@ input[type=submit]:hover {
               <div class="form-group row">
                <div class="col-xs-8">
                  <label for="casecategory">Case Category:</label>
-                 <input type="text" class="form-control input-sm" id="casecategory" name="CaseCategory" placeholder="Enter Case Category" value="<?php echo $CaseCategory;?>">
+                 <select class="form-control input-sm" id="casecategory" name="CaseCategory" placeholder="Enter Case Category">
+                  <?php
+                    foreach ($caseCategories as $category) {
+                      echo "<option value='{$category['Description']}'>{$category['Description']}</option>";
+                    }
+                  ?>
+                 </select>
                </div>
              </div>
              <div class="form-group row">
@@ -303,7 +335,13 @@ input[type=submit]:hover {
             <div class="form-group row">
                <div class="col-xs-4">
                  <label for="casestatus">Case Status:</label>
-                  <input type="text" class="form-control input-sm" id="casestatus" name="CaseStatus" placeholder="Enter Case Status" value="<?php echo $CaseStatus;?>">
+                 <select class="form-control input-sm" id="casestatus" name="CaseStatus" placeholder="Enter Case Status">
+                  <?php
+                    foreach ($caseRemarks as $remark) {
+                      echo "<option value='{$remark['Description']}'>{$remark['Description']}</option>";
+                    }
+                  ?>
+                 </select>
                </div>
              </div>
           <hr>

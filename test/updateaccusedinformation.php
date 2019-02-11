@@ -4,6 +4,7 @@ $user = "root";
 $password ="";
 $database = "database";
 
+$CaseNo = "";
 $AccusedLname = "";
 $AccusedFname = "";
 $AccusedMi = "";
@@ -29,6 +30,7 @@ function getPosts()
 {
     $posts = array();
 
+    // $posts[12] = $_POST['CaseNo'];
     $posts[13] = $_POST['AccusedLname'];
     $posts[14] = $_POST['AccusedFname'];
     $posts[15] = $_POST['AccusedMi'];
@@ -39,44 +41,32 @@ function getPosts()
     $posts[20] = $_POST['AccusedAge'];
     $posts[21] = $_POST['AccusedContactNo'];
     $posts[22] = $_POST['AccusedAddress'];
+    $posts[23] = $_POST['AccusedID'];
     
     return $posts;
 }
 
-
-// Insert
-if(isset($_POST['insert']))
+// Edit
+if(isset($_POST['update']))
 {
     $data = getPosts();
-
-    // foreach ($data as $key => $value) {
-    //   if (empty($value)) {
-    //     $errorMsg .= "$key is empty<br>";
-    //   }
-    // }
-
-    // if(empty($errorMsg)) {
-
-         $insert_Query3 = "INSERT INTO `accused information`(`AccusedLname`,`AccusedFname`,`AccusedMi`,`AccusedAlias`,`AccusedDOB`,`AccusedGender`,`AccusedStatus`,`AccusedAge`,`AccusedContactNo`,`AccusedAddress`) VALUES ('$data[13]','$data[14]','$data[15]','$data[16]','$data[17]','$data[18]','$data[19]','$data[20]','$data[21]','$data[22]')";
-
-      try {
-          
-          $insert_Result = mysqli_query($connect, $insert_Query3);
-         
-          if($insert_Result)
-          {
-              if(mysqli_affected_rows($connect) > 0)
-              {
-                  echo 'Data Inserted';
-              }else{
-                  echo 'Data Not Inserted';
-              }
-          }
-      } catch (Exception $ex) {
-          echo 'Error Insert '.$ex->getMessage();
-      }
-      
+    $update_Query = "UPDATE `accused information` SET `AccusedLname`='$data[13]',`AccusedFname`='$data[14]',`AccusedMi`='$data[15]',`AccusedAlias`='$data[16]',`AccusedDOB`='$data[17]',`AccusedGender`='$data[18]',`AccusedStatus`='$data[19]',`AccusedAge`='$data[20]',`AccusedContactNo`='$data[21]',`AccusedAddress`='$data[22]' WHERE `AccusedID` = '$data[23]'";
+    try{
+        $update_Result = mysqli_query($connect, $update_Query);
+        
+        if($update_Result)
+        {
+            if(mysqli_affected_rows($connect) > 0)
+            {
+                echo 'Data Updated';
+            }else{
+                echo 'Data Not Updated';
+            }
+        }
+    } catch (Exception $ex) {
+        echo 'Error Update '.$ex->getMessage();
     }
+}
 // }
   session_start(); 
 
@@ -249,7 +239,7 @@ input[type=submit]:hover {
      <div class="form-group row">
                <div class="col-xs-5">
                  <label for="caseno">Case Number:</label>
-                  <input id="case-number-input" type="number" class="form-control input-sm" id="caseno" name="" placeholder="Enter Case Number" value="">
+                  <input id="case-number-input" type="number" class="form-control input-sm" id="caseno" name="" placeholder="Enter Case Number" value="<?php echo $CaseNo;?>">
                </div>
           </div>
           <hr>
@@ -314,9 +304,10 @@ input[type=submit]:hover {
                     <input type="text" class="form-control input-sm" id="address" name="AccusedAddress" placeholder="Enter Address" value="<?php echo $AccusedAddress;?>">
                  </div>
                </div>
+               <input type="hidden" name="AccusedID" />
                <hr>
-                <input type="submit" name="insert" value="Update">
-                <input type="submit" name="insert" value="Clear">
+                <input type="submit" name="update" value="Update">
+                <input type="submit" name="" value="Clear">
       </div>
 
       <div class="col-xs-7">
